@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block titile %} cables list page{% endblock %}
+{% load crispy_forms_tags %}
+
+
+
+
+{% block content %}
+       <div class="row mb-3">
+        <div class="col-4">
+            <form method="get" class="d-flex">
+                <input class="form-control" type="text" placeholder="search" name="q" value="{{ search_query }}">
+                <button class="btn btn-outline-primary">
+                    search
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+      {% if page_obj %}
+
+        {% for product in page_obj.object_list %}
+            <div class="row mb-3 card">
+
+                <div class="col-2">
+                    <a href={% url 'products:detail' product.id %}><img class="cover-pic" src="{{ product.cover_picture.url }}"></a>
+                </div>
+
+                <div class="col-6">
+                    <a href={% url 'products:detail' product.id %}>
+                        {{ product.title }}
+                    </a>
+                    <p>
+                        {{ product.description }}
+                    </p>
+                    <p class="price">
+                        narx : {{ product.price }} sum/metr
+                    </p>
+                </div>
+
+            </div>
+
+        {% endfor %}
+        <nav>
+            <ul class="pagination">
+
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">&laquo; first</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a>
+                    </li>
+
+                {% endif %}
+                <li class="page-item">
+                    <a class="page-link" href="#">{{ page_obj.number }}</a>
+                </li>
+
+                {% if page_obj.has_next %}
+
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last&raquo;</a>
+                    </li>
+
+                {% endif %}
+            </ul>
+        </nav>
+    {% else %}
+        No products found.
+    {% endif %}
+
+
+{% endblock %}

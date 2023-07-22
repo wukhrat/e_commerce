@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block titile %} product detail page{% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="row mb-4 card">
+        <div class="col-2 ">
+            <img class="cover-pic" src="{{ product.cover_picture.url }}" alt="cover picture">
+        </div>
+        <div class="col-6">
+            <h3>
+            {{ product.title }}
+            </h3>
+            <p class="description">
+                {{ product.description }}
+            </p>
+            <p class="price">
+                {{ product.price }} sum/metr
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            <form method="post" action="{% url 'products:reviews' product.id %}">
+                {% csrf_token %}
+                {{ review_form | crispy }}
+                <button class="btn btn-primary mb-4">add review</button>
+            </form>
+        </div>
+    </div>
+
+    {% if product.productreview_set.exists %}
+        <h4>
+            Reviews
+        </h4>
+        <hr>
+
+        {% for review in product.productreview_set.all %}
+            <div class="row mb-3 card">
+                <div class="col-2 me-2">
+                    <img class="profile-pic" src="{{ review.user.profile_picture.url }}">
+                </div>
+                <div class="col-7">
+                    {% if review.user == request.user %}
+                        <a href="{% url 'products:edit-review' product.id review.id %}"><i class="bi bi-pen"></i></a>
+                        <a href="{% url 'products:confirm-delete-review' product.id review.id %}"><i class="bi bi-trash"></i></a>
+                    {% endif %}
+
+                    <p class="font-monospace">{{ review.comment }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}
